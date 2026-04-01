@@ -10,155 +10,157 @@ class ResetPasswordScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: AppColors.lightGradient, // #EAF5FA to #F6FBFE
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              // ── Back arrow ───────────────────────────────────
-              Align(
-                alignment: Alignment.topLeft,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 20, top: 20),
-                  child: IconButton(
-                    icon: const Icon(Icons.arrow_back, color: AppColors.deepBlue),
-                    onPressed: () => Navigator.pop(context),
+      backgroundColor: Colors.transparent,
+      body: Stack(
+        children: [
+          // ── PNG Background layer ──────────────────────────────────
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/forgot_password.png',
+              fit: BoxFit.cover,
+            ),
+          ),
+
+          // ── Foreground content ────────────────────────────────────
+          SafeArea(
+            child: Column(
+              children: [
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 20, top: 20),
+                    child: IconButton(
+                      icon: const Icon(Icons.arrow_back,
+                          color: AppColors.deepBlue),
+                      onPressed: () => Navigator.pop(context),
+                    ),
                   ),
                 ),
-              ),
 
-              const Spacer(),
+                const Spacer(),
 
-              // ── Main Content block centered vertically ───────
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 28),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Title + Graphic Row
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-                              Text(
-                                'Reset\nPassword',
-                                style: TextStyle(
-                                  color: AppColors.deepBlue,
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.w800,
-                                  height: 1.2,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 28),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: const [
+                                Text(
+                                  'Reset Your\nPassword',
+                                  style: TextStyle(
+                                    color: AppColors.deepBlue,
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.w800,
+                                    height: 1.2,
+                                  ),
                                 ),
-                              ),
-                              SizedBox(height: 8),
-                              Text(
-                                "Create a new, strong\npassword.",
-                                style: TextStyle(
-                                  color: AppColors.deepBlue,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w500,
+                                SizedBox(height: 8),
+                                Text(
+                                  "Enter the verification code sent\nto your email to reset your\npassword.",
+                                  style: TextStyle(
+                                    color: AppColors.deepBlue,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
+                          ),
+                          _AvatarCard(),
+                        ],
+                      ),
+
+                      const SizedBox(height: 50),
+
+                      const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'New password',
+                          style: TextStyle(
+                            color: AppColors.deepBlue,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w800,
                           ),
                         ),
-                        _AvatarCard(),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 12),
+                      const CustomTextField(
+                        hintText: 'Enter your new password',
+                        isPassword: true,
+                        withBorder: true,
+                      ),
 
-                    const SizedBox(height: 50),
+                      const SizedBox(height: 24),
 
-                    // Form
-                    const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'New password',
-                        style: TextStyle(
-                          color: AppColors.deepBlue,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
+                      const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Confirm password',
+                          style: TextStyle(
+                            color: AppColors.deepBlue,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w800,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    const CustomTextField(
-                      hintText: 'Enter your new password',
-                      isPassword: true,
-                      withBorder: true,
-                    ),
-
-                    const SizedBox(height: 24),
-
-                    const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Confirm password',
-                        style: TextStyle(
-                          color: AppColors.deepBlue,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
-                        ),
+                      const SizedBox(height: 12),
+                      const CustomTextField(
+                        hintText: 'Confirm your new password',
+                        isPassword: true,
+                        withBorder: true,
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    const CustomTextField(
-                      hintText: 'Confirm your new password',
-                      isPassword: true,
-                      withBorder: true,
-                    ),
 
-                    const SizedBox(height: 48),
+                      const SizedBox(height: 48),
 
-                    // Confirm button
-                    CustomButton(
-                      text: 'Confirm',
-                      backgroundColor: AppColors.deepBlue,
-                      textColor: Colors.white,
-                      borderRadius: 14.0,
-                      onPressed: () {
-                        // TODO: handle password reset
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(builder: (_) => const LoginScreen()),
-                          (route) => false,
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-
-              const Spacer(),
-
-              // ── Back to login (Bottom fixed) ───────────────────
-              Padding(
-                padding: const EdgeInsets.only(bottom: 40),
-                child: GestureDetector(
-                  onTap: () => Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (_) => const LoginScreen()),
-                    (route) => false,
+                      CustomButton(
+                        text: 'Confirm',
+                        backgroundColor: AppColors.deepBlue,
+                        textColor: Colors.white,
+                        borderRadius: 14.0,
+                        onPressed: () {
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const LoginScreen()),
+                            (route) => false,
+                          );
+                        },
+                      ),
+                    ],
                   ),
-                  child: const Text(
-                    'Back to login ?',
-                    style: TextStyle(
-                      color: AppColors.deepBlue,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w800,
+                ),
+
+                const Spacer(),
+
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 40),
+                  child: GestureDetector(
+                    onTap: () => Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (_) => const LoginScreen()),
+                      (route) => false,
+                    ),
+                    child: const Text(
+                      'Back to login ?',
+                      style: TextStyle(
+                        color: AppColors.deepBlue,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w800,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -180,10 +182,7 @@ class _AvatarCard extends StatelessWidget {
             offset: const Offset(4, 4),
           ),
         ],
-        border: Border.all(
-          color: AppColors.deepBlue,
-          width: 3.5,
-        ),
+        border: Border.all(color: AppColors.deepBlue, width: 3.5),
       ),
       child: Stack(
         clipBehavior: Clip.none,
@@ -192,11 +191,7 @@ class _AvatarCard extends StatelessWidget {
             top: 10,
             left: 0,
             right: 0,
-            child: Icon(
-              Icons.person,
-              color: AppColors.deepBlue,
-              size: 65,
-            ),
+            child: Icon(Icons.person, color: AppColors.deepBlue, size: 65),
           ),
           Positioned(
             bottom: 12,
@@ -221,7 +216,7 @@ class _AvatarCard extends StatelessWidget {
                 ),
               ),
             ),
-          )
+          ),
         ],
       ),
     );
