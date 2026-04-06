@@ -7,6 +7,9 @@ import '../../../core/widgets/custom_divider.dart';
 import 'signup_screen.dart';
 import 'forgot_password_screen.dart';
 
+import 'package:provider/provider.dart';
+import '../providers/auth_provider.dart';
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -16,6 +19,42 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool _rememberMe = false;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  void _handleLogin() async {
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill all fields')),
+      );
+      return;
+    }
+
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final success = await authProvider.login(
+      _emailController.text.trim(),
+      _passwordController.text,
+    );
+
+    if (success && mounted) {
+      // Typically navigate to home screen here
+      // Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomeScreen()));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Login Successful!')),
+      );
+    } else if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(authProvider.errorMessage ?? 'Login failed')),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,16 +114,18 @@ class _LoginScreenState extends State<LoginScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 24),
                       child: Column(
                         children: [
-                          const CustomTextField(
+                          CustomTextField(
                             hintText: 'Email',
                             prefixIcon: Icons.email_outlined,
                             keyboardType: TextInputType.emailAddress,
+                            controller: _emailController,
                           ),
                           const SizedBox(height: 12),
-                          const CustomTextField(
+                          CustomTextField(
                             hintText: 'Password',
                             prefixIcon: Icons.lock_outline,
                             isPassword: true,
+                            controller: _passwordController,
                           ),
                           const SizedBox(height: 12),
                           Row(
@@ -157,12 +198,21 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 40),
-                      child: CustomButton(
-                        text: 'Sign in',
-                        backgroundColor: Colors.white,
-                        textColor: AppColors.deepBlue,
-                        hasGlow: true,
-                        onPressed: () {},
+                      child: Consumer<AuthProvider>(
+                        builder: (context, auth, child) {
+                          if (auth.status == AuthStatus.loading) {
+                            return const Center(
+                                child: CircularProgressIndicator(
+                                    color: Colors.white));
+                          }
+                          return CustomButton(
+                            text: 'Sign in',
+                            backgroundColor: Colors.white,
+                            textColor: AppColors.deepBlue,
+                            hasGlow: true,
+                            onPressed: _handleLogin,
+                          );
+                        },
                       ),
                     ),
 

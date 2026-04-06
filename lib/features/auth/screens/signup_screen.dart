@@ -5,9 +5,65 @@ import '../../../core/widgets/custom_text_field.dart';
 import '../../../core/widgets/custom_button.dart';
 import '../../../core/widgets/custom_divider.dart';
 import 'login_screen.dart';
+import 'package:provider/provider.dart';
+import '../providers/auth_provider.dart';
 
-class SignupScreen extends StatelessWidget {
+class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
+
+  @override
+  State<SignupScreen> createState() => _SignupScreenState();
+}
+
+class _SignupScreenState extends State<SignupScreen> {
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  void _handleSignup() async {
+    if (_firstNameController.text.isEmpty ||
+        _lastNameController.text.isEmpty ||
+        _usernameController.text.isEmpty ||
+        _emailController.text.isEmpty ||
+        _passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill all fields')),
+      );
+      return;
+    }
+
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final success = await authProvider.register(
+      firstName: _firstNameController.text.trim(),
+      lastName: _lastNameController.text.trim(),
+      username: _usernameController.text.trim(),
+      email: _emailController.text.trim(),
+      password: _passwordController.text,
+    );
+
+    if (success && mounted) {
+      // Typically navigate to home screen here or to verify code
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Registration Successful!')),
+      );
+    } else if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(authProvider.errorMessage ?? 'Registration failed')),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _usernameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,31 +123,50 @@ class SignupScreen extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 24),
                       child: Column(
                         children: [
-                          const CustomTextField(hintText: 'First Name'),
-                          const SizedBox(height: 12),
-                          const CustomTextField(hintText: 'Last Name'),
-                          const SizedBox(height: 12),
-                          const CustomTextField(hintText: 'UserName'),
-                          const SizedBox(height: 12),
-                          const CustomTextField(
-                            hintText: 'Email',
-                            keyboardType: TextInputType.emailAddress,
+                          CustomTextField(
+                            hintText: 'First Name',
+                            controller: _firstNameController,
                           ),
                           const SizedBox(height: 12),
-                          const CustomTextField(
+                          CustomTextField(
+                            hintText: 'Last Name',
+                            controller: _lastNameController,
+                          ),
+                          const SizedBox(height: 12),
+                          CustomTextField(
+                            hintText: 'UserName',
+                            controller: _usernameController,
+                          ),
+                          const SizedBox(height: 12),
+                          CustomTextField(
+                            hintText: 'Email',
+                            keyboardType: TextInputType.emailAddress,
+                            controller: _emailController,
+                          ),
+                          const SizedBox(height: 12),
+                          CustomTextField(
                             hintText: 'Password',
                             isPassword: true,
+                            controller: _passwordController,
                           ),
                           const SizedBox(height: 30),
                           Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 40),
-                            child: CustomButton(
-                              text: 'Sign up',
-                              backgroundColor: Colors.white,
-                              textColor: AppColors.deepBlue,
-                              hasGlow: true,
-                              onPressed: () {},
+                            padding: const EdgeInsets.symmetric(horizontal: 40),
+                            child: Consumer<AuthProvider>(
+                              builder: (context, auth, child) {
+                                if (auth.status == AuthStatus.loading) {
+                                  return const Center(
+                                      child: CircularProgressIndicator(
+                                          color: Colors.white));
+                                }
+                                return CustomButton(
+                                  text: 'Sign up',
+                                  backgroundColor: Colors.white,
+                                  textColor: AppColors.deepBlue,
+                                  hasGlow: true,
+                                  onPressed: _handleSignup,
+                                );
+                              },
                             ),
                           ),
                         ],

@@ -35,6 +35,9 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   flutter_svg: ^2.2.2
+  dio: ^5.7.0
+  shared_preferences: ^2.3.3
+  provider: ^6.1.2
 
 dev_dependencies:
   flutter_test:
@@ -86,4 +89,5 @@ flutter:
   #         weight: 700
   #
   # For details regarding fonts from package dependencies,
+  # see https://flutter.dev/to/font-from-package
   # see https://flutter.dev/to/font-from-package
